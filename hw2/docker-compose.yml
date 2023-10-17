@@ -1,0 +1,36 @@
+services:
+  resource-service:
+    container_name: resource-service-container
+    build: resource-service/
+    ports: 
+      - "8080:8080"
+    depends_on: 
+      - resource-db-container
+  
+  resource-db:
+    container_name: resource-db-container
+    image: "postgres:16-alpine"
+    environment:
+      - POSTGRES_USER=songs_user
+      - POSTGRES_PASSWORD=songs_password
+      - POSTGRES_DB=resources
+    volumes:
+      - ./resource-service/db_docker:/docker-entrypoint-initdb.d/
+
+  song-service:
+    container_name: song-service-container
+    build: song-service/
+    ports:
+      - "8085:8080"
+    depends_on:
+      - song-db-container
+
+  song-db:
+    container_name: song-db-container
+    image: "postgres:16-alpine"
+    environment:
+      - POSTGRES_USER=songs_user
+      - POSTGRES_PASSWORD=songs_password
+      - POSTGRES_DB=songs
+    volumes:
+      - ./song-service/db_docker:/docker-entrypoint-initdb.d/
