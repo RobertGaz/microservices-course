@@ -6,6 +6,7 @@ services:
       - "8080:8080"
     depends_on: 
       - resource-db
+      - eureka-service-discovery
   
   resource-db:
     container_name: resource-db-container
@@ -17,13 +18,23 @@ services:
     volumes:
       - ./resource-service/db_docker:/docker-entrypoint-initdb.d/
 
-  song-service:
-    container_name: song-service-container
+  song-service-1:
+    container_name: song-service-container-1
     build: song-service/
     ports:
       - "8085:8080"
     depends_on:
       - song-db
+      - eureka-service-discovery
+
+  song-service-2:
+    container_name: song-service-container-2
+    build: song-service/
+    ports:
+      - "8086:8080"
+    depends_on:
+      - song-db
+      - eureka-service-discovery
 
   song-db:
     container_name: song-db-container
@@ -34,3 +45,9 @@ services:
       - POSTGRES_DB=songs
     volumes:
       - ./song-service/db_docker:/docker-entrypoint-initdb.d/
+
+  eureka-service-discovery:
+    container_name: eureka-service-discovery-container
+    build: eureka-service-discovery/
+    ports:
+      - "8761:8761"

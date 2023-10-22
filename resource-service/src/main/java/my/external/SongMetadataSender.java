@@ -4,6 +4,7 @@ import my.model.IdResponse;
 import my.model.SongMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -17,10 +18,11 @@ public class SongMetadataSender {
     @Value("${song.service.url}")
     private String songServiceUrl;
 
-    private RestTemplate restTemplate = new RestTemplate();
+    @Autowired
+    private RestTemplate restTemplate;
 
     public void sendMetadata(SongMetadata songMetadata) {
-        ResponseEntity<IdResponse> responseEntity= restTemplate.postForEntity(songServiceUrl + "/songs", songMetadata, IdResponse.class);
+        ResponseEntity<IdResponse> responseEntity = restTemplate.postForEntity(songServiceUrl + "/songs", songMetadata, IdResponse.class);
         LOGGER.info("Sent metadata to song service, received metadata id: {}", responseEntity.getBody().getId());
     }
 }
